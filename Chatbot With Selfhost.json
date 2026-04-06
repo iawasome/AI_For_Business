@@ -1,0 +1,186 @@
+{
+  "name": "Chatbot With Selfhost",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Sandy. How can I assist you today?",
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -80,
+        32
+      ],
+      "id": "f5fb1461-1d5c-4cc2-b703-c686efe0a80a",
+      "name": "When chat message received",
+      "webhookId": "f5b57eec-3650-41b9-9831-8ed30fbe663e"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah chatbot untuk bisnis SandwichGen.\n\nTugas Anda:\n- Menjawab pertanyaan tentang produk dan harga\n- Gunakan data dari Google Sheets sebagai sumber utama\n- Jangan mengarang jawaban\n- Jika produk tidak ditemukan, jawab dengan sopan\n\nGunakan tool Google Sheets untuk mencari data produk."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        144,
+        16
+      ],
+      "id": "9999fa06-d904-46d4-b52f-498f4f6dd1d5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        16,
+        224
+      ],
+      "id": "4b48a7be-2a54-40bd-be11-9cdcbd1f217f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vI1rCxVbcAHWTKsF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        224
+      ],
+      "id": "ffdee402-69c4-4868-bd0e-c9e7027fbc82",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RRrRc0q2Gc_AzkHEwZNjOyD-4y9TYyAS2Cm14DOn4C0",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RRrRc0q2Gc_AzkHEwZNjOyD-4y9TYyAS2Cm14DOn4C0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        224
+      ],
+      "id": "25fcb9e4-efcf-44a2-ab7c-929bb4514d97",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "E2MnH94hBTZFKaw1",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "message": "={{$json[\"output\"]}}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        16
+      ],
+      "id": "83ded580-063b-4859-bb18-b1730832f249",
+      "name": "Chat",
+      "webhookId": "5f400225-f57c-4f5c-aa03-50d4b10d9c2e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "531f404c-05d0-438a-bc78-a0a5134af66a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b474f3d7a052a670d7ecaaf20101c50a49e90bfbefa6cd7ff2f531cd8142dbb"
+  },
+  "id": "2lon4Wp16bkFaihw",
+  "tags": []
+}
