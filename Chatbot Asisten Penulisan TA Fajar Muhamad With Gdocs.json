@@ -1,0 +1,289 @@
+{
+  "name": "Chatbot Asisten Penulisan TA Fajar Muhamad With Gdocs",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Fajar. How can I assist you today?",
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        1744,
+        160
+      ],
+      "id": "d17c91b8-3837-4aa3-9996-8229613bd183",
+      "name": "When chat message received",
+      "webhookId": "f12c57e2-13be-444b-a26b-a0f5fb811637"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah Asisten Penulisan Skripsi. Jawabanmu harus selalu berpedoman pada informasi yang ditemukan melalui tool Supabase Vector Store. Jika informasi tidak ada di sana, sampaikan bahwa kamu tidak menemukannya di panduan resmi."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1968,
+        256
+      ],
+      "id": "80f98a2b-4249-418d-b10e-8126e8882d08",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        464
+      ],
+      "id": "03229cee-e669-4a32-91ab-6eace8a25c06",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vI1rCxVbcAHWTKsF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Gunakan tool ini untuk mencari informasi mengenai standar dan kriteria penulisan skripsi/tugas akhir, mulai dari judul, struktur bab I-V, metodologi, hingga aturan sitasi dan daftar pustaka.",
+        "tableName": {
+          "__rl": true,
+          "value": "chatbot_tugas_akhir",
+          "mode": "list",
+          "cachedResultName": "chatbot_tugas_akhir"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2288,
+        400
+      ],
+      "id": "26d7bbc6-d905-4868-a9d2-0126e1d241fa",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "hUsbjdjhQy8Mhy4d",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1968,
+        464
+      ],
+      "id": "d9d8ae04-f009-43a7-838b-08ab820231cc",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "GIGVbQLo4JBSrTZZ",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        48
+      ],
+      "id": "e48ebd2f-34c2-4f4a-b320-6b2ec6f52321",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "chatbot_tugas_akhir",
+          "mode": "list",
+          "cachedResultName": "chatbot_tugas_akhir"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2144,
+        -144
+      ],
+      "id": "730dfa90-d4e8-45de-b48c-0b1332bb8839",
+      "name": "Supabase Vector Store2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "hUsbjdjhQy8Mhy4d",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        48
+      ],
+      "id": "c89cd0dd-794e-466c-81af-365582cb9c84",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vI1rCxVbcAHWTKsF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1GQa-9GvHLF9yn57myHGOIna6eUxQZjvyr3lbOVVmsBU",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1920,
+        -128
+      ],
+      "id": "6fad76ee-d58c-4a79-b98d-d5c705e17892",
+      "name": "Download file",
+      "credentials": {
+        "googleApi": {
+          "id": "epEqIpcrHAtxpQej",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5bc74bb1-fee1-489d-bf9f-3beb9d53a869",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b474f3d7a052a670d7ecaaf20101c50a49e90bfbefa6cd7ff2f531cd8142dbb"
+  },
+  "id": "yhmGeRb9uE1ksjmK",
+  "tags": []
+}
